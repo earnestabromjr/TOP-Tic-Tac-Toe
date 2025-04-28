@@ -15,16 +15,6 @@ const gameboard = (function() {
 
     const getBoard = () => board;
 
-    const setCell = (row, col, value) => {
-        if (row < 0 || row >= rows || col < 0 || col >= cols) {
-            throw new Error('Invalid cell position');
-        }
-        if (value !== 'X' && value !== 'O' && value !== '') {
-            throw new Error('Invalid cell value');
-        }
-        board[row][col] = value;
-    }
-
     const resetBoard = () => {
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
@@ -36,7 +26,14 @@ const gameboard = (function() {
     return {
         getBoard,
         logBoard,
-        setCell,
         resetBoard,
     };
 })();
+
+function Player(name, marker) {
+    this.name = name;
+    this.marker = marker;
+
+    this.getName = () => this.name;
+    this.getMarker = () => this.marker;
+}
