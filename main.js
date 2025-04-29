@@ -22,11 +22,14 @@ const gameboard = (function() {
             }
         }
     };
-    const checkCell = board.filter((row, col) => {
+    const checkCell = (row, col) => {
         if (row[col] === '') {
             return false; // Cell is empty
+        } else {
+            return row[col]; // Cell is occupied, return the marker
         }
-    });
+
+    };
 
 
     return {
@@ -46,5 +49,13 @@ function Player(name, marker) {
 }
 
 const gameController = (function() {
+    board = gameboard.getBoard();
+    const playerOne = new Player('Player 1', 'X');
+    const playerTwo = new Player('Player 2', 'O');
 
+    let currentPlayer = playerOne;
+    let gameOver = false;
+    const switchPlayer = () => {
+        currentPlayer = (currentPlayer === playerOne) ? playerTwo : playerOne;
+    };
 })();
