@@ -78,14 +78,40 @@ const gameController = (function() {
         }
     }
 
-    return {
-        getCurrentPlayer: () => currentPlayer,
-        getPlayerOne: () => playerOne,
-        getPlayerTwo: () => playerTwo,
-        switchPlayer,
-        getGameOver: () => gameOver,
-        setGameOver: (status) => {
-            gameOver = status;
-        },
-    }
-})();
+    const checkWinCondition = (row, col) => {
+        const marker = board[row][col];
+        // Check row
+        if (board[row].every(cell => cell === marker)) {
+            console.log(`${currentPlayer.getName()} wins!`);
+            gameOver = true;
+            return;
+        }
+        // Check column
+        if (board.every(r => r[col] === marker)) {
+            console.log(`${currentPlayer.getName()} wins!`);
+            gameOver = true;
+            return;
+        }
+        // Check diagonals
+        if (row === col && board.every((r, i) => r[i] === marker)) {
+            console.log(`${currentPlayer.getName()} wins!`);
+            gameOver = true;
+            return;
+        }
+        if (row + col === 2 && board.every((r, i) => r[2 - i] === marker)) {
+            console.log(`${currentPlayer.getName()} wins!`);
+            gameOver = true;
+            return;
+        }
+
+        return {
+            getCurrentPlayer: () => currentPlayer,
+            getPlayerOne: () => playerOne,
+            getPlayerTwo: () => playerTwo,
+            switchPlayer,
+            getGameOver: () => gameOver,
+            setGameOver: (status) => {
+                gameOver = status;
+            },
+        }
+    })();
