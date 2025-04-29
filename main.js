@@ -25,11 +25,13 @@ const gameboard = (function() {
     const checkCell = (row, col) => {
         if (row[col] === '') {
             return false; // Cell is empty
-        } else {
-            return row[col]; // Cell is occupied, return the marker
         }
-
     };
+
+    const getCell = (row, col) => {
+        return row[col]; // Cell is occupied, return the marker
+    }
+
 
 
     return {
@@ -37,6 +39,7 @@ const gameboard = (function() {
         logBoard,
         resetBoard,
         checkCell,
+        getCell,
     };
 })();
 
@@ -58,4 +61,31 @@ const gameController = (function() {
     const switchPlayer = () => {
         currentPlayer = (currentPlayer === playerOne) ? playerTwo : playerOne;
     };
+
+    const playMove = (row, col) => {
+        if (gameOver) {
+            console.log("Game is over");
+            return;
+        }
+        if (board[row][col]) {
+            console.log("Cell already occupied");
+            return;
+        } else {
+            board[row][col] = currentPlayer.getMarker(); // Place the marker in the cell
+            gameboard.logBoard(); // Log the board after the move
+            checkWinCondition(row, col); // Check for a win condition after the move
+            switchPlayer(); // Switch to the next player
+        }
+    }
+
+    return {
+        getCurrentPlayer: () => currentPlayer,
+        getPlayerOne: () => playerOne,
+        getPlayerTwo: () => playerTwo,
+        switchPlayer,
+        getGameOver: () => gameOver,
+        setGameOver: (status) => {
+            gameOver = status;
+        },
+    }
 })();
