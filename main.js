@@ -21,12 +21,19 @@ const gameboard = (function() {
                 board[i][j] = ''; // Reset each cell to an empty string
             }
         }
-    }
+    };
+    const checkCell = board.filter((row, col) => {
+        if (row[col] === '') {
+            return false; // Cell is empty
+        }
+    });
+
 
     return {
         getBoard,
         logBoard,
         resetBoard,
+        checkCell,
     };
 })();
 
@@ -37,3 +44,7 @@ function Player(name, marker) {
     this.getName = () => this.name;
     this.getMarker = () => this.marker;
 }
+
+const gameController = (function() {
+
+})();
