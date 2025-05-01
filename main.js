@@ -22,6 +22,7 @@ const gameboard = (function() {
             }
         }
     };
+
     const checkCell = (row, col) => {
         if (row[col] === '') {
             return false; // Cell is empty
@@ -46,7 +47,6 @@ const gameboard = (function() {
 function Player(name, marker) {
     this.name = name;
     this.marker = marker;
-
     this.getName = () => this.name;
     this.getMarker = () => this.marker;
 }
@@ -55,7 +55,6 @@ const gameController = (function() {
     board = gameboard.getBoard();
     const playerOne = new Player('Player 1', 'X');
     const playerTwo = new Player('Player 2', 'O');
-
     let currentPlayer = playerOne;
     let gameOver = false;
     const switchPlayer = () => {
@@ -67,7 +66,7 @@ const gameController = (function() {
             console.log("Game is over");
             return;
         }
-        if (board[row][col]) {
+        if (gameboard.checkCell(board[row], col)) {
             console.log("Cell already occupied");
             return;
         } else {
@@ -103,15 +102,19 @@ const gameController = (function() {
             gameOver = true;
             return;
         }
+    }
 
-        return {
-            getCurrentPlayer: () => currentPlayer,
-            getPlayerOne: () => playerOne,
-            getPlayerTwo: () => playerTwo,
-            switchPlayer,
-            getGameOver: () => gameOver,
-            setGameOver: (status) => {
-                gameOver = status;
-            },
-        }
-    })();
+    return {
+        playMove,
+        getCurrentPlayer: () => currentPlayer,
+        getPlayerOne: () => playerOne,
+        getPlayerTwo: () => playerTwo,
+        switchPlayer,
+        getGameOver: () => gameOver,
+        setGameOver: (status) => {
+            gameOver = status;
+        },
+    }
+})();
+
+
