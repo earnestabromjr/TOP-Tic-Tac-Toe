@@ -188,4 +188,24 @@ const gameController = (function() {
     };
 })();
 
+const displayController = {
+    init: () => {
+        console.log("Display Controller initialized.");
+        // Initialize the game board display, event listeners, etc.
+    },
 
+    updateBoard: () => {
+        console.log("Updating board display...");
+        // Logic to update the UI with the current gameboard state
+    },
+
+    showMessage: (message) => {
+        console.log(message);
+        // Logic to display messages to the user
+    },
+
+    resetDisplay: () => {
+        console.log("Resetting display...");
+        // Logic to reset the UI for a new game
+    }
+};
