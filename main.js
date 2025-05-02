@@ -93,21 +93,6 @@ const gameController = (function() {
         currentPlayer = (currentPlayer === playerOne) ? playerTwo : playerOne;
     };
 
-    const playMove = (row, col) => {
-        if (gameOver) {
-            console.log("Game is over");
-            return;
-        }
-        if (board.checkCell(row, col) === false) {
-            console.log("Cell already occupied");
-            return;
-        }
-        board[row][col] = currentPlayer.getMarker(); // Place the marker in the cell
-        gameboard.logBoard(); // Log the board after the move
-        checkWinCondition(row, col); // Check for a win condition after the move
-        switchPlayer(); // Switch to the next player
-    }
-
     const checkWinCondition = (row, col, marker) => {
         const board = gameboard.getBoard();
 
@@ -122,16 +107,43 @@ const gameController = (function() {
         }
 
         // Check diagonals
-        if (row === col && board.every((r, i) => r[i] === marker)) {
-            console.log(`${currentPlayer.getName()} wins!`);
-            gameOver = true;
+        if (row === col) {
+            let diagonalWin = true;
+            for (let i = 0; i < 3; i++) {
+                if (board[i][i] !== marker) {
+                    diagonalWin = false;
+                    break;
+                }
+            }
+            if (diagonalWin) return true;
+        }
+        if (row + col === 2) {
+            let antiDiagonalWin = true;
+            for (let i = 0; i < 3; i++) {
+                if (board[i][2 - i] !== marker) {
+                    antiDiagonalWin = false;
+                    break;
+                }
+            }
+            if (antiDiagonalWin) return true;
+        }
+
+        return false; // No winner
+    }
+
+    const playMove = (row, col) => {
+        if (gameOver) {
+            console.log("Game is over");
             return;
         }
-        if (row + col === 2 && board.every((r, i) => r[2 - i] === marker)) {
-            console.log(`${currentPlayer.getName()} wins!`);
-            gameOver = true;
+        if (!board.checkCell(row, col)) {
+            console.log("Cell already occupied");
             return;
         }
+        board[row][col] = currentPlayer.getMarker(); // Place the marker in the cell
+        gameboard.logBoard(); // Log the board after the move
+        checkWinCondition(row, col); // Check for a win condition after the move
+        switchPlayer(); // Switch to the next player
     }
 
     return {
