@@ -5,9 +5,16 @@ const gameboard = (function() {
     let board = Array(rows).fill().map(() => Array(cols).fill(''));
 
     // Private methods
-    isValidPosition: (row, col) => {
+    const isValidPosition = (row, col) => {
         return row >= 0 && row < rows && col >= 0 && col < cols;
-    }
+    };
+
+    const isCellEmpty = (row, col) => {
+        if (!isValidPosition(row, col)) {
+            return false; // Cell is empty
+        }
+        return board[row][col] === ''; // Return true if cell is empty, false if occupied
+    };
 
     return {
         // Public methods
@@ -31,13 +38,6 @@ const gameboard = (function() {
             console.log('---');
         },
 
-        isCellEmpty: (row, col) => {
-            if (!isValidPosition(row, col)) {
-                return false; // Cell is empty
-            }
-            return board[row][col] === ''; // Return true if cell is empty, false if occupied
-        },
-
         getCell: (row, col) => {
             if (!isValidPosition(row, col)) {
                 return null; // Invalid position
@@ -55,7 +55,6 @@ const gameboard = (function() {
 
         printBoard: () => {
             const boardString = board.map(row => row.map(cell => cell || ' ').join(' | ')).join('\n---------\n');
-            console.log(boardString);
             return boardString;
         },
 
@@ -124,35 +123,69 @@ const gameController = (function() {
     const playMove = (row, col) => {
         if (gameOver) {
             console.log("Game is over");
-            return false;
+            return { success: false, message: "Game is over. Start new game." };
         }
-        if (gameboard.setCell(row, col, currentPlayer.getMarker())) {
+        if (!gameboard.setCell(row, col, currentPlayer.getMarker())) {
             console.log("Cell already occupied");
-            return false;
+            return { success: false, message: "Invalid move. Cell already occupied." };
         }
-        board[row][col] = currentPlayer.getMarker(); // Place the marker in the cell
         gameboard.logBoard(); // Log the board after the move
-        checkWinCondition(row, col); // Check for a win condition after the move
+        if (checkWinCondition(row, col, currentPlayer.getMarker())) {
+            winner = currentPlayer;
+            gameOver = true;
+            return {
+                success: true,
+                gameOver: true,
+                message: `${currentPlayer.getName()} wins!`,
+                winner: currentPlayer.getName(),
+            };
+        }
+
+        if (gameboard.fullBoard()) {
+            gameOver = true;
+            return {
+                success: true,
+                gameOver: true,
+                message: "It's a draw!",
+                winner: null,
+            };
+        }
         switchPlayer(); // Switch to the next player
-    }
+
+        return {
+            success: true,
+            currentPlayer: currentPlayer.getName(),
+        }
+    };
+
+    const newGame = () => {
+        gameboard.resetBoard();
+        currentPlayer = playerOne;
+        gameOver = false;
+        winner = null;
+        return {
+            message: "New game started!",
+            currentPlayer: currentPlayer.getName(),
+        };
+    };
 
     return {
-        board: {
-            getBoard: board.getBoard,
-            resetBoard: board.resetBoard,
-            isCellEmpty: board.isCellEmpty,
-            getCell: board.getCell,
-        },
         playMove,
+        newGame,
         getCurrentPlayer: () => currentPlayer,
         getPlayerOne: () => playerOne,
         getPlayerTwo: () => playerTwo,
         switchPlayer,
         getGameOver: () => gameOver,
+        getWinner: () => winner,
         setGameOver: (status) => {
             gameOver = status;
         },
-    }
+        getBoard: gameboard.getBoard,
+        printBoard: gameboard.printBoard,
+        resetBoard: gameboard.resetBoard,
+        logBoard: gameboard.logBoard,
+    };
 })();
 
 
