@@ -192,6 +192,16 @@ const displayController = {
     init: () => {
         console.log("Display Controller initialized.");
         // Initialize the game board display, event listeners, etc.
+
+        // Vars
+        const gameBoardElement = document.getElementById('gameboard');
+        const board = gameboard.getBoard();
+        gameBoardElement.innerHTML = ''; // Clear existing content
+        board.forEach((row, rowIndex) => {
+            const rowElement = document.createElement('div');
+
+        });
+
     },
 
     updateBoard: () => {
