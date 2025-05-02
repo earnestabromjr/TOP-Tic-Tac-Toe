@@ -75,19 +75,20 @@ const gameboard = (function() {
     };
 })();
 
-function Player(name, marker) {
-    this.name = name;
-    this.marker = marker;
-    this.getName = () => this.name;
-    this.getMarker = () => this.marker;
+function createPlayer(name, marker) {
+    return {
+        getName: () => name,
+        getMarker: () => marker,
+    }
 }
 
 const gameController = (function() {
-    const playerOne = new Player('Player 1', 'X');
-    const playerTwo = new Player('Player 2', 'O');
+    const playerOne = createPlayer('Player 1', 'X');
+    const playerTwo = createPlayer('Player 2', 'O');
     const board = gameboard;
     let currentPlayer = playerOne;
     let gameOver = false;
+    let winner = null;
     const switchPlayer = () => {
         currentPlayer = (currentPlayer === playerOne) ? playerTwo : playerOne;
     };
@@ -107,20 +108,19 @@ const gameController = (function() {
         switchPlayer(); // Switch to the next player
     }
 
-    const checkWinCondition = (row, col) => {
-        const marker = board[row][col];
+    const checkWinCondition = (row, col, marker) => {
+        const board = gameboard.getBoard();
+
         // Check row
         if (board[row].every(cell => cell === marker)) {
-            console.log(`${currentPlayer.getName()} wins!`);
-            gameOver = true;
-            return;
+            return true;
         }
+
         // Check column
         if (board.every(r => r[col] === marker)) {
-            console.log(`${currentPlayer.getName()} wins!`);
-            gameOver = true;
-            return;
+            return true;
         }
+
         // Check diagonals
         if (row === col && board.every((r, i) => r[i] === marker)) {
             console.log(`${currentPlayer.getName()} wins!`);
