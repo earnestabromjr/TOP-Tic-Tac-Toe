@@ -54,8 +54,7 @@ const gameboard = (function() {
         },
 
         printBoard: () => {
-            const boardString = board.map(row => row.map(cell => cell || ' ').join(' | ')).join('\n---------\n');
-            return boardString;
+            return board.map(row => row.map(cell => cell || ' ').join(' | ')).join('\n---------\n');
         },
 
         fullBoard: () => {
@@ -199,7 +198,8 @@ const displayController = {
         gameBoardElement.innerHTML = ''; // Clear existing content
         board.forEach((row, rowIndex) => {
             const rowElement = document.createElement('div');
-
+            rowElement.textContent = row;
+            gameBoardElement.appendChild(rowElement);
         });
 
     },
