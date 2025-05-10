@@ -13,18 +13,32 @@
         <div class="header">
             <h1>Terry's Tic-Tac-Toe</h1>
         </div>
+        <div class="game-info">
+            <div class="buttons">
+                <button id="start-button">Start Game</button>
+                <button id="reset-button">Reset Game</button>
+                <button id="exit-button">Exit Game</button>
+            </div>
+            <div class="player-info">
+                <h2>Player 1: X</h2>
+                <h2>Player 2: O</h2>
+            </div>
+            <div class="game-status">
+                <h2 id="status">Current Turn: Player 1</h2>
+            </div>
+        </div>
         <div class="gameboard" id="gameboard">
-            <div class="game-row">
-                <div class="game-cell"></div>
-                <div class="game-cell"></div>
-                <div class="game-cell"></div>
+            <div class="game-row" data-row="0">
+                <div class="game-cell" data-cell="0"></div>
+                <div class="game-cell" data-cell="1"></div>
+                <div class="game-cell" data-cell="2"></div>
             </div>
-            <div class="game-row">
-                <div class="game-cell"></div>
-                <div class="game-cell"></div>
-                <div class="game-cell"></div>
+            <div class="game-row" data-row="1">
+                <div class="game-cell" data-cell="0"></div>
+                <div class="game-cell" data-cell="1"></div>
+                <div class="game-cell" data-cell="2"></div>
             </div>
-            <div class="game-row">
+            <div class="game-row" data-row="2">
                 <div class="game-cell"></div>
                 <div class="game-cell"></div>
                 <div class="game-cell"></div>

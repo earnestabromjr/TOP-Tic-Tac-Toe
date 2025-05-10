@@ -38,6 +38,13 @@ const gameboard = (function() {
             console.log('---');
         },
 
+        isCellEmpty: (row, col) => {
+            if (!isValidPosition(row, col)) {
+                return false; // Cell is empty
+            }
+            return board[row][col] === ''; // Return true if cell is empty, false if occupied
+        },
+
         getCell: (row, col) => {
             if (!isValidPosition(row, col)) {
                 return null; // Invalid position
@@ -51,6 +58,16 @@ const gameboard = (function() {
             }
             board[row][col] = marker; // Set the marker in the cell
             return true; // Successfully set the cell
+        },
+
+        setDiv: (event, marker) => {
+            const row = parseInt(event.target.dataset.row);
+            const col = parseInt(event.target.dataset.col);
+            if (isValidPosition(row, col) && isCellEmpty(row, col)) {
+                board[row][col] = marker; // Set the marker in the cell
+                return true; // Successfully set the cell
+            }
+            return false; // Invalid position or cell already occupied
         },
 
         printBoard: () => {
@@ -154,6 +171,9 @@ const gameController = (function() {
         return {
             success: true,
             currentPlayer: currentPlayer.getName(),
+            message: `${currentPlayer.getName()}'s turn.`,
+            gameOver: false,
+            mark: currentPlayer.getMarker(),
         }
     };
 
@@ -188,30 +208,78 @@ const gameController = (function() {
 })();
 
 const displayController = {
-    init: () => {
+    gameBoardElement: document.getElementById('gameboard'),
+    playerDisplay: document.getElementById('player-display'),
+    resetButton: null,
+
+    renderBoard() {
         console.log("Display Controller initialized.");
         // Initialize the game board display, event listeners, etc.
 
         // Vars
-        const gameBoardElement = document.getElementById('gameboard');
-        const board = gameboard.getBoard();
-        gameBoardElement.innerHTML = ''; // Clear existing content
+        const board = gameController.getBoard();
+
+        this.gameBoardElement.innerHTML = ''; // Clear existing content
         board.forEach((row, rowIndex) => {
-            const rowElement = document.createElement('div');
-            rowElement.textContent = row;
-            gameBoardElement.appendChild(rowElement);
+            const gameRow = document.createElement('div');
+            gameRow.classList.add('game-row');
+            gameRow.dataset.row = rowIndex.toString();
+            gameRow.dataset.col = rowIndex.toString();
+
+            row.forEach((col, colIndex) => {
+                const gameCell = document.createElement('div');
+                gameCell.dataset.row = rowIndex.toString();
+                gameCell.dataset.col = colIndex.toString();
+                gameCell.textContent = col;
+                gameCell.classList.add('game-cell');
+                gameRow.appendChild(gameCell);
+            });
+            this.gameBoardElement.appendChild(gameRow);
         });
 
+        this.attachEventListeners();
     },
 
-    updateBoard: () => {
-        console.log("Updating board display...");
-        // Logic to update the UI with the current gameboard state
+    attachEventListeners() {
+        const gameCells = document.querySelectorAll('.game-cell');
+        gameCells.forEach(cell => {
+            cell.addEventListener('click', this.handleCellClick);
+        });
+    },
+
+    handleCellClick(event) {
+        const rowIndex = parseInt(event.target.dataset.row);
+        const colIndex = parseInt(event.target.dataset.col);
+        if (!gameController.getGameOver() && gameboard.isCellEmpty(rowIndex, colIndex)) {
+            const result = gameController.playMove(rowIndex, colIndex);
+            displayController.renderBoard(); // Re-render after move
+            displayController.updateCurrentPlayer(); // Update player display after move
+            displayController.showMessage(result.message);
+            console.log({ ...result });
+            if (result.gameOver) {
+                displayController.showMessage(result.message);
+            }
+        }
+    },
+
+    updateCurrentPlayer: () => {
+        console.log("Updating current player display...");
+        // Logic to update the UI with the current player's name and marker
+        const currentPlayer = gameController.getCurrentPlayer();
+        if (this.playerDisplay) {
+            this.playerDisplay.textContent = `Current Player: ${currentPlayer.getName()} (${currentPlayer.getMarker()})`;
+        }
     },
 
     showMessage: (message) => {
         console.log(message);
         // Logic to display messages to the user
+        const statusDisplay = document.getElementById('status');
+        if (statusDisplay) {
+            statusDisplay.textContent = message;
+        } else {
+            console.error("Status display element not found.");
+        }
     },
 
     resetDisplay: () => {
@@ -219,3 +287,20 @@ const displayController = {
         // Logic to reset the UI for a new game
     }
 };
+
+// Event Listeners
+// Initialize the game board and event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    displayController.renderBoard();
+    displayController.updateCurrentPlayer();
+
+    // Reset button
+    const resetButton = document.getElementById('reset-button');
+    resetButton.addEventListener('click', () => {
+        gameController.newGame();
+        displayController.renderBoard();
+        displayController.updateCurrentPlayer();
+        displayController.resetDisplay();
+    });
+
+});
